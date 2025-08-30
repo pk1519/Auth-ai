@@ -1,0 +1,7 @@
+timestamp,user_id,avg_mouse_speed,avg_typing_speed,tab_switch_rate,mouse_click_rate,keyboard_error_rate,active_window_duration,model,score,is_improper,reason
+2025-08-25T13:12:04.325419,priya,0.0,0.0,0.0,0.0,0.0,30.0,XGBoost,0.1031285507170477,0,classifier_proba=0.103
+2025-08-25T13:12:09.337226,priya,0.0,0.0,0.0,0.0,0.0,5.005060911178589,XGBoost,0.1031285507170477,0,classifier_proba=0.103
+2025-08-25T13:12:14.341513,priya,0.0,0.0,0.0,0.0,0.0,10.008952617645264,XGBoost,0.1031285507170477,0,classifier_proba=0.103
+2025-08-25T13:12:19.347457,priya,0.0,0.0,0.0,0.0,0.0,15.01468014717102,XGBoost,0.1031285507170477,0,classifier_proba=0.103
+2025-08-25T13:12:24.357909,priya,0.0,0.0,0.0,0.0,0.0,20.025202989578247,XGBoost,0.1031285507170477,0,classifier_proba=0.103
+2025-08-25T13:12:29.364867,priya,0.0,0.0,2.0,0.0,0.0,12.516065120697021,XGBoost,0.1846854669302889,0,classifier_proba=0.185

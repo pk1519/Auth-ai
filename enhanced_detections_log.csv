@@ -1,0 +1,1 @@
+timestamp,user_id,session_id,is_bot_detected,confidence_score,model_used,source_type,simulation_profile,simulation_mode,avg_mouse_speed,avg_typing_speed,tab_switch_rate,mouse_click_rate,keyboard_error_rate,active_window_duration

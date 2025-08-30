@@ -1,0 +1,272 @@
+[
+  {
+    "timestamp": "2025-08-26T20:09:28.819120",
+    "session_data": {
+      "session_id": "sim_20250826_200920_8419",
+      "mode": "SimulatorMode.BASIC_VARIABILITY",
+      "profile_name": "Casual User",
+      "start_time": "2025-08-26 20:09:20.810550",
+      "end_time": "2025-08-26 20:09:28.819111",
+      "total_actions": 3,
+      "detected_as_bot": 0,
+      "detection_events": []
+    },
+    "profile_used": {
+      "name": "Casual User",
+      "avg_typing_speed": 200,
+      "typing_variance": 0.125,
+      "mouse_speed_range": [
+        120,
+        350
+      ],
+      "click_accuracy": 0.88,
+      "idle_frequency": 12.0,
+      "error_rate": 0.04,
+      "backspace_probability": 0.7,
+      "pause_frequency": 0.15,
+      "double_click_rate": 0.08,
+      "scroll_frequency": 0.3
+    },
+    "mode": "basic_variability"
+  },
+  {
+    "timestamp": "2025-08-26T20:09:38.863630",
+    "session_data": {
+      "session_id": "sim_20250826_200930_7989",
+      "mode": "SimulatorMode.INTERMEDIATE_VARIABILITY",
+      "profile_name": "Fast Typer",
+      "start_time": "2025-08-26 20:09:30.854069",
+      "end_time": "2025-08-26 20:09:38.863623",
+      "total_actions": 3,
+      "detected_as_bot": 0,
+      "detection_events": []
+    },
+    "profile_used": {
+      "name": "Fast Typer",
+      "avg_typing_speed": 480,
+      "typing_variance": 0.35,
+      "mouse_speed_range": [
+        200,
+        550
+      ],
+      "click_accuracy": 0.92,
+      "idle_frequency": 6.0,
+      "error_rate": 0.08,
+      "backspace_probability": 0.85,
+      "pause_frequency": 0.05,
+      "double_click_rate": 0.12,
+      "scroll_frequency": 0.4
+    },
+    "mode": "intermediate_variability"
+  },
+  {
+    "timestamp": "2025-08-26T20:09:48.926136",
+    "session_data": {
+      "session_id": "sim_20250826_200940_4164",
+      "mode": "SimulatorMode.HIGH_VARIABILITY",
+      "profile_name": "Careful User",
+      "start_time": "2025-08-26 20:09:40.917529",
+      "end_time": "2025-08-26 20:09:48.926130",
+      "total_actions": 1,
+      "detected_as_bot": 0,
+      "detection_events": []
+    },
+    "profile_used": {
+      "name": "Careful User",
+      "avg_typing_speed": 140,
+      "typing_variance": 0.27,
+      "mouse_speed_range": [
+        80,
+        220
+      ],
+      "click_accuracy": 0.96,
+      "idle_frequency": 20.0,
+      "error_rate": 0.02,
+      "backspace_probability": 0.9,
+      "pause_frequency": 0.25,
+      "double_click_rate": 0.05,
+      "scroll_frequency": 0.2
+    },
+    "mode": "high_variability"
+  },
+  {
+    "timestamp": "2025-08-26T20:09:58.985695",
+    "session_data": {
+      "session_id": "sim_20250826_200950_7832",
+      "mode": "SimulatorMode.DATASET_REPLAY",
+      "profile_name": "Mobile-Style User",
+      "start_time": "2025-08-26 20:09:50.980191",
+      "end_time": "2025-08-26 20:09:58.985686",
+      "total_actions": 2,
+      "detected_as_bot": 0,
+      "detection_events": []
+    },
+    "profile_used": {
+      "name": "Mobile-Style User",
+      "avg_typing_speed": 100,
+      "typing_variance": 0.4,
+      "mouse_speed_range": [
+        60,
+        180
+      ],
+      "click_accuracy": 0.82,
+      "idle_frequency": 15.0,
+      "error_rate": 0.12,
+      "backspace_probability": 0.6,
+      "pause_frequency": 0.3,
+      "double_click_rate": 0.03,
+      "scroll_frequency": 0.6
+    },
+    "mode": "dataset_replay"
+  },
+  {
+    "timestamp": "2025-08-26T20:11:09.562161",
+    "session_data": {
+      "session_id": "sim_20250826_201059_3484",
+      "mode": "SimulatorMode.BASIC_VARIABILITY",
+      "profile_name": "Casual User",
+      "start_time": "2025-08-26 20:10:59.552381",
+      "end_time": "2025-08-26 20:11:09.562151",
+      "total_actions": 1,
+      "detected_as_bot": 0,
+      "detection_events": []
+    },
+    "profile_used": {
+      "name": "Casual User",
+      "avg_typing_speed": 200,
+      "typing_variance": 0.125,
+      "mouse_speed_range": [
+        120,
+        350
+      ],
+      "click_accuracy": 0.88,
+      "idle_frequency": 12.0,
+      "error_rate": 0.04,
+      "backspace_probability": 0.7,
+      "pause_frequency": 0.15,
+      "double_click_rate": 0.08,
+      "scroll_frequency": 0.3
+    },
+    "mode": "basic_variability"
+  },
+  {
+    "timestamp": "2025-08-26T20:11:20.616160",
+    "session_data": {
+      "session_id": "sim_20250826_201110_3865",
+      "mode": "SimulatorMode.INTERMEDIATE_VARIABILITY",
+      "profile_name": "Fast Typer",
+      "start_time": "2025-08-26 20:11:10.607055",
+      "end_time": "2025-08-26 20:11:20.616151",
+      "total_actions": 64,
+      "detected_as_bot": 0,
+      "detection_events": []
+    },
+    "profile_used": {
+      "name": "Fast Typer",
+      "avg_typing_speed": 480,
+      "typing_variance": 0.35,
+      "mouse_speed_range": [
+        200,
+        550
+      ],
+      "click_accuracy": 0.92,
+      "idle_frequency": 6.0,
+      "error_rate": 0.08,
+      "backspace_probability": 0.85,
+      "pause_frequency": 0.05,
+      "double_click_rate": 0.12,
+      "scroll_frequency": 0.4
+    },
+    "mode": "intermediate_variability"
+  },
+  {
+    "timestamp": "2025-08-26T20:11:31.681162",
+    "session_data": {
+      "session_id": "sim_20250826_201121_3457",
+      "mode": "SimulatorMode.HIGH_VARIABILITY",
+      "profile_name": "Careful User",
+      "start_time": "2025-08-26 20:11:21.670343",
+      "end_time": "2025-08-26 20:11:31.681156",
+      "total_actions": 2,
+      "detected_as_bot": 0,
+      "detection_events": []
+    },
+    "profile_used": {
+      "name": "Careful User",
+      "avg_typing_speed": 140,
+      "typing_variance": 0.27,
+      "mouse_speed_range": [
+        80,
+        220
+      ],
+      "click_accuracy": 0.96,
+      "idle_frequency": 20.0,
+      "error_rate": 0.02,
+      "backspace_probability": 0.9,
+      "pause_frequency": 0.25,
+      "double_click_rate": 0.05,
+      "scroll_frequency": 0.2
+    },
+    "mode": "high_variability"
+  },
+  {
+    "timestamp": "2025-08-26T20:11:42.744817",
+    "session_data": {
+      "session_id": "sim_20250826_201132_8180",
+      "mode": "SimulatorMode.DATASET_REPLAY",
+      "profile_name": "Mobile-Style User",
+      "start_time": "2025-08-26 20:11:32.735093",
+      "end_time": "2025-08-26 20:11:42.744808",
+      "total_actions": 3,
+      "detected_as_bot": 0,
+      "detection_events": []
+    },
+    "profile_used": {
+      "name": "Mobile-Style User",
+      "avg_typing_speed": 100,
+      "typing_variance": 0.4,
+      "mouse_speed_range": [
+        60,
+        180
+      ],
+      "click_accuracy": 0.82,
+      "idle_frequency": 15.0,
+      "error_rate": 0.12,
+      "backspace_probability": 0.6,
+      "pause_frequency": 0.3,
+      "double_click_rate": 0.03,
+      "scroll_frequency": 0.6
+    },
+    "mode": "dataset_replay"
+  },
+  {
+    "timestamp": "2025-08-26T20:12:04.065808",
+    "session_data": {
+      "session_id": "sim_20250826_201152_2812",
+      "mode": "SimulatorMode.HIGH_VARIABILITY",
+      "profile_name": "Casual User",
+      "start_time": "2025-08-26 20:11:52.052683",
+      "end_time": "2025-08-26 20:12:04.065798",
+      "total_actions": 4,
+      "detected_as_bot": 0,
+      "detection_events": []
+    },
+    "profile_used": {
+      "name": "Casual User",
+      "avg_typing_speed": 200,
+      "typing_variance": 0.45,
+      "mouse_speed_range": [
+        120,
+        350
+      ],
+      "click_accuracy": 0.88,
+      "idle_frequency": 12.0,
+      "error_rate": 0.04,
+      "backspace_probability": 0.7,
+      "pause_frequency": 0.15,
+      "double_click_rate": 0.08,
+      "scroll_frequency": 0.3
+    },
+    "mode": "high_variability"
+  }
+]
