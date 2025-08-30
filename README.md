@@ -349,7 +349,7 @@ The application automatically selects the best performing model from available t
 <img width="1918" height="872" alt="image" src="https://github.com/user-attachments/assets/df289ae4-0f09-4bac-89c7-b76407f459f8" />
 
 ## contact me-
-priyanshu345kumar@gmail.com
+piyush1917@gmail.com
 
 Made with ❤️ and some coffee
 
