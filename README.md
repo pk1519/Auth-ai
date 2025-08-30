@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # AuthAI - Real-Time Behavioral Biometrics Authentication System
 
 🔒 **An Advanced Authentication System with Real-time Behavioral Monitoring**
