@@ -78,32 +78,54 @@ class CloudRealTimeMonitor:
         """Make prediction using the loaded model"""
         try:
             # Convert features to array format expected by model
-            feature_array = np.array([[
+            feature_vector = np.array([
                 features['avg_mouse_speed'],
                 features['avg_typing_speed'],
                 features['tab_switch_rate'],
                 features['mouse_click_rate'],
                 features['keyboard_error_rate'],
                 features['active_window_duration']
-            ]])
+            ])
             
-            # Apply scaling if scaler is available
-            if self.scaler:
-                feature_array = self.scaler.transform(feature_array)
-            
-            # Make prediction
-            if hasattr(self.model, 'predict_proba'):
-                # For models with probability predictions
-                pred_proba = self.model.predict_proba(feature_array)[0]
-                if len(pred_proba) > 1:
-                    score = float(pred_proba[1])  # Probability of bot class
-                else:
-                    score = float(pred_proba[0])
+            # Handle different model input requirements
+            if self.model_name in ('LSTM', 'Transformer'):
+                # Sequential models need 3D input: (batch_size, sequence_length, features)
+                # Create a sequence by repeating the current feature vector
+                seq_length = 50  # Based on model architecture
+                feature_array = np.tile(feature_vector, (seq_length, 1)).reshape(1, seq_length, 6)
+                
+                # Apply scaling if scaler is available
+                if self.scaler:
+                    # Scale the flattened version then reshape
+                    flat = feature_array.reshape(-1, 6)
+                    flat_scaled = self.scaler.transform(flat)
+                    feature_array = flat_scaled.reshape(1, seq_length, 6)
             else:
-                # For models without probability (like Isolation Forest)
+                # Tabular models need 2D input: (batch_size, features)
+                feature_array = feature_vector.reshape(1, -1)
+                
+                # Apply scaling if scaler is available
+                if self.scaler:
+                    feature_array = self.scaler.transform(feature_array)
+            
+            # Make prediction based on model type
+            if self.model_name in ('RandomForest', 'XGBoost', 'GradientBoosting'):
+                # Classifier models with predict_proba
+                pred_proba = self.model.predict_proba(feature_array)[0]
+                score = float(pred_proba[1]) if len(pred_proba) > 1 else float(pred_proba[0])
+            elif self.model_name == 'IsolationForest':
+                # Anomaly detection model
                 pred = self.model.predict(feature_array)[0]
-                # Convert to probability-like score
+                # Convert to probability-like score (higher = more anomalous)
                 score = 0.8 if pred == -1 else 0.2
+            elif self.model_name in ('LSTM', 'Transformer', 'Autoencoder'):
+                # Deep learning models
+                pred = self.model.predict(feature_array, verbose=0)
+                score = float(pred.ravel()[0])
+            else:
+                # Default fallback
+                pred = self.model.predict(feature_array)
+                score = float(pred.ravel()[0]) if hasattr(pred, 'ravel') else float(pred[0])
             
             # Determine if it's considered improper (bot-like)
             is_improper = 1 if score > 0.5 else 0
@@ -206,60 +228,146 @@ class CloudBotSimulator:
         print("🤖 Bot simulation completed")
 
 
-def load_best_model_and_meta():
+def load_best_model_and_meta(models_folder="models"):
     """
-    Load the best available model for cloud deployment
-    Returns a simple demo model if no trained models are available
+    Load the best performing model based on comparison results or fallback priorities
+    Cloud-compatible version with proper model selection
     """
+    import pandas as pd
+    import joblib
+    
+    # Expected filenames
+    results_csv = os.path.join(models_folder, "model_comparison_results.csv")
+    fallback_names = {
+        "RandomForest": os.path.join(models_folder, "rf_model.joblib"),
+        "XGBoost": os.path.join(models_folder, "xgb_model.joblib"),
+        "GradientBoosting": os.path.join(models_folder, "xgb_model.joblib"),
+        "IsolationForest": os.path.join(models_folder, "iso_model.joblib"),
+        "Autoencoder": os.path.join(models_folder, "ae_model.keras"),
+        "LSTM": os.path.join(models_folder, "lstm_model.keras"),
+        "Transformer": os.path.join(models_folder, "transformer_model.keras")
+    }
+
+    best_model_name = None
+    best_performance = None
+    
+    # Try to load best model from comparison results
+    if os.path.exists(results_csv):
+        try:
+            df = pd.read_csv(results_csv)
+            print(f"\n📊 Model Performance Comparison (Cloud):")
+            print(f"{'Model':<15} {'ROC-AUC':<8} {'Accuracy':<8}")
+            print("-" * 35)
+            
+            # Sort by ROC-AUC score (primary metric)
+            df_sorted = df.sort_values('roc_auc', ascending=False)
+            
+            for _, row in df_sorted.iterrows():
+                model_name = row['model']
+                roc_auc = row.get('roc_auc', 0)
+                accuracy = row.get('accuracy', 0)
+                
+                print(f"{model_name:<15} {roc_auc:<8.3f} {accuracy:<8.3f}")
+                
+                # Check if model file exists
+                model_path = fallback_names.get(model_name)
+                if model_path and os.path.exists(model_path):
+                    if best_model_name is None:
+                        best_model_name = model_name
+                        best_performance = roc_auc
+            
+            if best_model_name:
+                print(f"\n🏆 Selected Best Model: {best_model_name} (ROC-AUC: {best_performance:.3f})")
+            
+        except Exception as e:
+            print(f"⚠️ Error reading model comparison results: {e}")
+            best_model_name = None
+
+    # Fallback model selection based on availability and known performance
+    if best_model_name is None:
+        print("\n🔄 Using fallback model selection...")
+        # Priority order for cloud: prefer simpler models for reliability
+        priorities = ["Transformer", "LSTM", "XGBoost", "RandomForest", "IsolationForest", "Autoencoder"]
+        
+        print("📋 Available models:")
+        available_models = []
+        for name in priorities:
+            model_path = fallback_names.get(name)
+            if model_path and os.path.exists(model_path):
+                available_models.append(name)
+                print(f"  ✅ {name}")
+            else:
+                print(f"  ❌ {name} (not found)")
+        
+        if available_models:
+            best_model_name = available_models[0]
+            print(f"\n🎯 Selected Model: {best_model_name} (highest priority available)")
+        else:
+            # Create demo model as last resort
+            print("\nℹ️ No trained models found, creating demo classifier...")
+            from sklearn.ensemble import RandomForestClassifier
+            demo_model = RandomForestClassifier(n_estimators=10, random_state=42)
+            X_demo = np.random.rand(100, 6)
+            y_demo = np.random.randint(0, 2, 100)
+            demo_model.fit(X_demo, y_demo)
+            return "Demo_RandomForest", demo_model, None, None
+
+    # Load the selected model
+    model = None
+    model_path = fallback_names.get(best_model_name)
+    
     try:
-        import joblib
-        
-        # Try to load models from models directory
-        model_files = {
-            'RandomForest': 'models/rf_model.joblib',
-            'XGBoost': 'models/xgb_model.joblib',
-            'IsolationForest': 'models/iso_model.joblib'
-        }
-        
-        # Try to load any available model
-        for model_name, model_path in model_files.items():
-            if os.path.exists(model_path):
-                try:
-                    model = joblib.load(model_path)
-                    print(f"✅ Loaded {model_name} model from {model_path}")
-                    
-                    # Try to load scaler
-                    scaler_path = model_path.replace('_model.joblib', '_scaler.joblib')
-                    scaler = None
-                    if os.path.exists(scaler_path):
-                        scaler = joblib.load(scaler_path)
-                        print(f"✅ Loaded scaler from {scaler_path}")
-                    
-                    return model_name, model, scaler, None
-                    
-                except Exception as e:
-                    print(f"Failed to load {model_name}: {e}")
-                    continue
-        
-        # If no models found, create a simple demo classifier
-        print("ℹ️ No trained models found, creating demo classifier...")
-        from sklearn.ensemble import RandomForestClassifier
-        
-        # Create and train a simple demo model with random data
-        demo_model = RandomForestClassifier(n_estimators=10, random_state=42)
-        
-        # Generate some dummy training data
-        X_demo = np.random.rand(100, 6)  # 6 features
-        y_demo = np.random.randint(0, 2, 100)  # Binary labels
-        
-        demo_model.fit(X_demo, y_demo)
-        
-        print("✅ Created demo RandomForest model")
-        return "Demo_RandomForest", demo_model, None, None
-        
-    except ImportError:
-        print("❌ Required libraries not available")
-        raise Exception("Failed to load or create model")
+        if best_model_name in ("RandomForest", "XGBoost", "GradientBoosting", "IsolationForest"):
+            model = joblib.load(model_path)
+            print(f"✅ Loaded {best_model_name} model from {model_path}")
+        else:
+            # Try to load Keras models
+            try:
+                import tensorflow as tf
+                model = tf.keras.models.load_model(model_path)
+                print(f"✅ Loaded {best_model_name} model from {model_path}")
+            except ImportError:
+                print(f"⚠️ TensorFlow not available, skipping {best_model_name}")
+                # Fallback to RandomForest
+                rf_path = fallback_names.get("RandomForest")
+                if rf_path and os.path.exists(rf_path):
+                    model = joblib.load(rf_path)
+                    best_model_name = "RandomForest"
+                    print(f"✅ Fallback to RandomForest model")
+                else:
+                    raise Exception("No fallback models available")
+    except Exception as e:
+        print(f"❌ Failed to load {best_model_name}: {e}")
+        raise Exception(f"Could not load model: {e}")
+
+    # Try to load scaler
+    scaler = None
+    scaler_paths = [
+        os.path.join(models_folder, "authai_scaler.joblib"),
+        os.path.join(models_folder, "scaler.joblib"),
+        os.path.join(models_folder, "authai_scaler.pkl")
+    ]
+    
+    for scaler_path in scaler_paths:
+        if os.path.exists(scaler_path):
+            try:
+                scaler = joblib.load(scaler_path)
+                print(f"✅ Loaded scaler from {scaler_path}")
+                break
+            except Exception as e:
+                print(f"⚠️ Failed to load scaler from {scaler_path}: {e}")
+    
+    # Try to load AE metadata
+    ae_meta = None
+    ae_meta_path = os.path.join(models_folder, "authai_ae_meta.joblib")
+    if os.path.exists(ae_meta_path):
+        try:
+            ae_meta = joblib.load(ae_meta_path)
+            print(f"✅ Loaded AE metadata from {ae_meta_path}")
+        except Exception as e:
+            print(f"⚠️ Failed to load AE metadata: {e}")
+
+    return best_model_name, model, scaler, ae_meta
 
 
 # Alias for backwards compatibility
