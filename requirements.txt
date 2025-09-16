@@ -5,6 +5,10 @@ plotly>=5.15.0
 scikit-learn>=1.3.0
 joblib>=1.3.0
 
+# Deep Learning Models (for Transformer, LSTM, Autoencoder)
+tensorflow>=2.13.0
+keras>=2.13.0
+
 # Note: pynput and pyautogui don't work in cloud environments
 # We'll simulate behavioral data for cloud deployment
 
