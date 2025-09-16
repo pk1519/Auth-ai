@@ -22,16 +22,7 @@ from collections import deque
 import queue
 import os
 
-# Import authentication modules
-try:
-    from user_auth import (
-        init_session_state, is_authenticated, get_current_user, 
-        logout_user_session, require_authentication
-    )
-    from auth_pages import show_auth_page
-except ImportError:
-    st.error("Could not import authentication modules. Make sure user_auth.py and auth_pages.py are in the same directory.")
-    st.stop()
+# Authentication system removed for simplified deployment
 
 # Import our custom modules (try cloud version first)
 try:
@@ -391,11 +382,8 @@ def create_feature_charts():
     
     return charts
 
-def show_user_dashboard():
-    """Show user dashboard with logout functionality"""
-    # User info in header
-    user = get_current_user()
-    
+def show_main_dashboard():
+    """Show main application dashboard"""
     # Auto-initialize system on first load
     if st.session_state.monitor is None:
         with st.spinner("🚀 Auto-initializing AuthAI system with best model..."):
@@ -408,49 +396,15 @@ def show_user_dashboard():
                     time.sleep(2)
                     st.rerun()
     
-    # Header with user info and logout
-    header_col1, header_col2 = st.columns([3, 1])
-    
-    with header_col1:
-        st.title("🔒 AuthAI Real-Time Monitor")
-        st.markdown(f"**Welcome, {user['username']}!** | Behavioral Biometrics Authentication System")
-    
-    with header_col2:
-        st.markdown("<br>", unsafe_allow_html=True)  # Add some spacing
-        if st.button("👤 Profile", key="profile_btn"):
-            st.session_state.page = "profile"
-            st.rerun()
-        if st.button("🚪 Logout", key="logout_btn"):
-            logout_user_session()
-            st.success("✅ You have been logged out successfully!")
-            st.session_state.page = "login"
-            st.rerun()
+    # Header
+    st.title("🔒 AuthAI Real-Time Monitor")
+    st.markdown("**Behavioral Biometrics Authentication System**")
 
 def main():
     """Main Streamlit application"""
     
-    # Initialize session state for authentication
-    init_session_state()
-    
-    # Check authentication status
-    if not is_authenticated():
-        # Show authentication pages
-        show_auth_page()
-        return
-    
-    # Show different pages based on session state
-    if st.session_state.get('page') == 'profile':
-        from auth_pages import show_profile_page
-        show_profile_page()
-        
-        # Back to dashboard button
-        if st.button("← Back to Dashboard"):
-            st.session_state.page = "dashboard"
-            st.rerun()
-        return
-    
-    # Show user dashboard
-    show_user_dashboard()
+    # Show main dashboard
+    show_main_dashboard()
     
     # Sidebar controls
     st.sidebar.title("Controls")
