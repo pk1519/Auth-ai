@@ -22,16 +22,21 @@ from collections import deque
 import queue
 import os
 
-# Import authentication modules
-try:
-    from user_auth import (
-        init_session_state, is_authenticated, get_current_user, 
-        logout_user_session, require_authentication
-    )
-    from auth_pages import show_auth_page
-except ImportError:
-    st.error("Could not import authentication modules. Make sure user_auth.py and auth_pages.py are in the same directory.")
-    st.stop()
+# Authentication disabled: define no-auth stubs
+def get_current_user():
+    return {"username": "Guest", "email": "guest@example.com"}
+
+def logout_user_session():
+    # Clear app-specific session state (no auth involved)
+    keys_to_clear = [
+        'monitor', 'monitor_running', 'bot_simulator', 'bot_running',
+        'enhanced_simulator', 'enhanced_simulator_running', 'detection_feedback_system',
+        'detection_history', 'feature_history', 'model_info', 'last_detection',
+        'bot_detected', 'bot_alert_count', 'last_bot_detection_time'
+    ]
+    for key in keys_to_clear:
+        if key in st.session_state:
+            del st.session_state[key]
 
 # Import our custom modules
 try:
@@ -446,39 +451,28 @@ def show_user_dashboard():
                 st.rerun()
         
         with nav_col2:
-            if st.button("👤 Profile", key="profile_btn"):
-                st.session_state.page = "profile"
+            if st.button("🏠 Home", key="home_btn"):
+                st.session_state.page = "dashboard"
                 st.rerun()
         
         with nav_col3:
-            if st.button("🚺 Logout", key="logout_btn"):
+            if st.button("🔄 Reset", key="logout_btn"):
                 logout_user_session()
-                st.success("✅ You have been logged out successfully!")
-                st.session_state.page = "login"
+                st.success("✅ Session reset!")
+                st.session_state.page = "dashboard"
                 st.rerun()
 
 def main():
     """Main Streamlit application"""
     
-    # Initialize session state for authentication
-    init_session_state()
-    
-    # Check authentication status
-    if not is_authenticated():
-        # Show authentication pages
-        show_auth_page()
-        return
+    # Initialize page state (no authentication mode)
+    if 'page' not in st.session_state:
+        st.session_state.page = "dashboard"
     
     # Show different pages based on session state
     if st.session_state.get('page') == 'profile':
-        from auth_pages import show_profile_page
-        show_profile_page()
-        
-        # Back to dashboard button
-        if st.button("← Back to Dashboard"):
-            st.session_state.page = "dashboard"
-            st.rerun()
-        return
+        # Profile page disabled in no-auth mode
+        st.session_state.page = "dashboard"
     
     elif st.session_state.get('page') == 'analytics':
         try:

@@ -44,12 +44,26 @@ Auth ai/
 
 ## 🚀 Quick Start
 
+### No-Auth Mode (Default in this repo)
+- This project is configured to run WITHOUT any login/authentication screens.
+- MongoDB is NOT required in no-auth mode.
+
+Steps:
+1. Install dependencies
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Run the app
+   ```bash
+   streamlit run authai_streamlit_app.py
+   ```
+3. Open the browser and use the dashboard directly (you will see "Guest" as the user).
+
 ### Prerequisites
 
 1. **Python 3.8+** installed
-2. **MongoDB** installed and running
-   - Download from: https://www.mongodb.com/try/download/community
-   - Start service: `net start MongoDB` (Windows)
+2. (Optional) **MongoDB** if you re-enable authentication.
+   - For no-auth mode, you can ignore MongoDB entirely.
 
 ### Installation
 
@@ -58,24 +72,20 @@ Auth ai/
    pip install -r requirements.txt
    ```
 
-2. **Setup Database**
+2. (Optional) Setup Database (only if you plan to re-enable auth)
    ```bash
    python setup_database.py
    ```
-   This will:
-   - Test MongoDB connection
-   - Create necessary collections
-   - Create test users
-   - Validate authentication system
+   This will test MongoDB and create demo users. Not needed in no-auth mode.
 
 3. **Run the Application**
    ```bash
    streamlit run authai_streamlit_app.py
    ```
 
-### Test Credentials
+### Test Credentials (Auth mode only)
 
-After running `setup_database.py`, you can use these test accounts:
+If you re-enable auth and run `setup_database.py`, you can use these test accounts:
 
 | Username  | Password | Role     |
 |-----------|----------|---------|
@@ -85,21 +95,17 @@ After running `setup_database.py`, you can use these test accounts:
 
 ## 🎯 How to Use
 
-### 1. First Time Setup
+### 1. First Time Setup (No-Auth Mode)
 1. Navigate to `http://localhost:8501`
-2. Click "Create New Account" to register
-3. Fill in username, email, and password
-4. Accept terms and create account
+2. Click "Initialize System" in the sidebar to load models
+3. Click "Start Monitor" to begin
 
 ### 2. Login Process
-1. Enter username/email and password
-2. Click "Login" to authenticate
-3. You'll be redirected to the dashboard
+No login in no-auth mode.
 
 ### 3. Dashboard Features
-- **User Info**: Shows logged-in username
-- **Profile Access**: View/edit user profile
-- **Logout Option**: Secure session termination
+- **User Info**: Shows "Guest" user
+- **Reset**: Clears the current session state
 - **AuthAI Monitoring**: Real-time behavioral analysis
 
 ### 4. AuthAI Monitoring

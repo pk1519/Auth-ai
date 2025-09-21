@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Logs and generated analysis outputs
+behavior_simulation_log.json
+demo_analysis_report.json
+detections_log.csv
+enhanced_detections_log.csv
+integration_test_log.csv
+test_enhanced_log.csv
+
+# Keep models and dataset (needed for demo/deploy)
+# models/
+# Dataset/

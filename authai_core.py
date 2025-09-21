@@ -40,6 +40,13 @@ except Exception:
     tf = None
     keras = None
 
+# XGBoost availability check
+try:
+    import xgboost as xgb  # noqa: F401
+    XGB_AVAILABLE = True
+except Exception:
+    XGB_AVAILABLE = False
+
 # Import advanced adversarial bot if available
 try:
     from adversarial_bot import AdvancedAdversarialBot, BotDifficulty
@@ -124,30 +131,61 @@ def load_best_model_and_meta(models_folder=MODELS_FOLDER):
         try:
             df = pd.read_csv(results_csv)
             print(f"\n📊 Model Performance Comparison:")
-            print(f"{'Model':<15} {'ROC-AUC':<8} {'Accuracy':<8} {'F1-Score':<8}")
-            print("-" * 45)
-            
-            # Sort by ROC-AUC score (primary metric)
-            df_sorted = df.sort_values('roc_auc', ascending=False)
-            
-            for _, row in df_sorted.iterrows():
-                model_name = row['model']
-                roc_auc = row.get('roc_auc', 0)
-                accuracy = row.get('accuracy', 0)
-                f1_score = row.get('f1_score', 0)
-                
-                print(f"{model_name:<15} {roc_auc:<8.3f} {accuracy:<8.3f} {f1_score:<8.3f}")
-                
-                # Check if model file exists
+            print(f"{'Model':<15} {'ROC-AUC':<8} {'Accuracy':<8} {'F1-Score':<8} {'Composite':<10}")
+            print("-" * 65)
+
+            # Metric weights (can be adjusted via env)
+            try:
+                w_roc = float(os.getenv('AUTHAI_WEIGHT_ROC', '0.6'))
+                w_f1 = float(os.getenv('AUTHAI_WEIGHT_F1', '0.3'))
+                w_acc = float(os.getenv('AUTHAI_WEIGHT_ACC', '0.1'))
+            except Exception:
+                w_roc, w_f1, w_acc = 0.6, 0.3, 0.1
+
+            # Normalize weights
+            total_w = max(1e-6, (w_roc + w_f1 + w_acc))
+            w_roc, w_f1, w_acc = w_roc/total_w, w_f1/total_w, w_acc/total_w
+
+            candidates = []
+
+            # Iterate in original order; we will compute composite and choose best among available
+            for _, row in df.iterrows():
+                model_name = str(row.get('model', '')).strip()
+                roc_auc = float(row.get('roc_auc', 0) or 0)
+                accuracy = float(row.get('accuracy', 0) or 0)
+                f1_score = float(row.get('f1_score', 0) or 0)
+
+                # Check if model file exists and dependencies available
                 model_path = fallback_names.get(model_name)
-                if model_path and os.path.exists(model_path):
-                    if best_model_name is None:
-                        best_model_name = model_name
-                        best_performance = roc_auc
-            
-            if best_model_name:
-                print(f"\n🏆 Selected Best Model: {best_model_name} (ROC-AUC: {best_performance:.3f})")
-            
+                if not (model_path and os.path.exists(model_path)):
+                    continue
+                if tf is None and model_name in ("LSTM", "Transformer", "Autoencoder"):
+                    continue
+                if not XGB_AVAILABLE and model_name == "XGBoost":
+                    continue
+
+                composite = (w_roc * roc_auc) + (w_f1 * f1_score) + (w_acc * accuracy)
+                candidates.append({
+                    'model': model_name,
+                    'roc_auc': roc_auc,
+                    'accuracy': accuracy,
+                    'f1_score': f1_score,
+                    'composite': composite
+                })
+
+                print(f"{model_name:<15} {roc_auc:<8.3f} {accuracy:<8.3f} {f1_score:<8.3f} {composite:<10.3f}")
+
+            if candidates:
+                # Choose by highest composite, tie-break by ROC-AUC, then F1
+                candidates.sort(key=lambda c: (c['composite'], c['roc_auc'], c['f1_score']), reverse=True)
+                best = candidates[0]
+                best_model_name = best['model']
+                best_performance = best['composite']
+                print(f"\n🏆 Selected Best Model: {best_model_name} (Composite: {best_performance:.3f})")
+            else:
+                print("⚠️ No suitable models from comparison (missing files/dependencies). Using fallback priorities...")
+                best_model_name = None
+
         except Exception as e:
             print(f"⚠️ Error reading model comparison results: {e}")
             best_model_name = None
@@ -155,8 +193,19 @@ def load_best_model_and_meta(models_folder=MODELS_FOLDER):
     # Fallback model selection based on availability and known performance
     if best_model_name is None:
         print("\n🔄 Using fallback model selection...")
-        # Priority order: Transformer -> LSTM -> XGB -> RF -> ISO -> AE
-        priorities = ["Transformer", "LSTM", "XGBoost", "RandomForest", "IsolationForest", "Autoencoder"]
+        # Priority order depends on availability of frameworks
+        if tf is None:
+            # Prefer non-TF models if TensorFlow isn't installed
+            if XGB_AVAILABLE:
+                priorities = ["XGBoost", "RandomForest", "IsolationForest"]
+            else:
+                priorities = ["RandomForest", "IsolationForest"]
+        else:
+            # TensorFlow available
+            if XGB_AVAILABLE:
+                priorities = ["Transformer", "LSTM", "XGBoost", "RandomForest", "IsolationForest", "Autoencoder"]
+            else:
+                priorities = ["Transformer", "LSTM", "RandomForest", "IsolationForest", "Autoencoder"]
         
         print("📋 Available models:")
         available_models = []
