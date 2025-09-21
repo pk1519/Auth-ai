@@ -350,12 +350,13 @@ The application automatically selects the best performing model from available t
 
 ## Screenshot
 
-<img width="1915" height="863" alt="image" src="https://github.com/user-attachments/assets/d125c0c8-a37f-4f22-880f-4103daece96e" />
-<img width="1912" height="868" alt="image" src="https://github.com/user-attachments/assets/d744c683-d5b5-4399-932d-21e08cea3af8" />
-<img width="1918" height="872" alt="image" src="https://github.com/user-attachments/assets/df289ae4-0f09-4bac-89c7-b76407f459f8" />
+<img width="1915" height="863" alt="Screenshot 2025-08-29 003859" src="https://github.com/user-attachments/assets/45911486-e54a-4a96-961e-f24d5b4c9274" />
+<img width="1912" height="868" alt="Screenshot 2025-08-29 003917" src="https://github.com/user-attachments/assets/9809cbe0-5046-4002-9e0a-6975c15347ce" />
+<img width="1918" height="872" alt="Screenshot 2025-08-29 004023" src="https://github.com/user-attachments/assets/a7df0ed6-c3f1-4ce6-b7c6-ed076d8686e7" />
+
 
 ## contact me-
-piyush1917@gmail.com
+priyanshu345kumar@gmail.com
 
 Made with ❤️ and some coffee
 
